@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "932924738298",
+    "project_id": "moviebooking-system",
+    "storage_bucket": "moviebooking-system.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:932924738298:android:1b856e138bd0eb3be0d743",
+        "android_client_info": {
+          "package_name": "com.delit.flutter_e_ticket"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "932924738298-v01d2eh9i9ndo315je4h2if3m6aa65tf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.delit.flutter_e_ticket",
+            "certificate_hash": "ff5461de2f6f6c58abaccffc5d5cb27eb9f69fb6"
+          }
+        },
+        {
+          "client_id": "932924738298-4jk8tqrmpfpbu5305vievcdn17l5jkgd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBeosg-HrbGbQvy1Vn1fuayNfG6-5eafRg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "932924738298-4jk8tqrmpfpbu5305vievcdn17l5jkgd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
