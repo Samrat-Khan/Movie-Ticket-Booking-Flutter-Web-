@@ -17,7 +17,7 @@ class _SignInSignUpState extends State<SignInSignUp> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text("Movie Booking"),
-            FlatButton.icon(
+            TextButton.icon(
               onPressed: () => Navigator.push(
                 context,
                 MaterialPageRoute(

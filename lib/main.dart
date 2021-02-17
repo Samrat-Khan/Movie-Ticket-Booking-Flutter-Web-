@@ -1,16 +1,36 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_e_ticket/Screens/Admin_Profile/Admin_Profile.dart';
 
-void main() {
-  runApp(MyApp());
+import 'Routes/route.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(
+    MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: AdminProfile(),
-    );
+    return FutureBuilder(
+        future: _initialization,
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text("An Error"),
+            );
+          }
+          if (snapshot.connectionState == ConnectionState.done) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              initialRoute: '/',
+              onGenerateRoute: RouteGenerator.onGenerateRoute,
+            );
+          }
+          return CircularProgressIndicator();
+        });
   }
 }

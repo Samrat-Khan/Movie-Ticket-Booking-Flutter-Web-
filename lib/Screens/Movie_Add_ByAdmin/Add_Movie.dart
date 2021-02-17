@@ -3,7 +3,8 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_e_ticket/Services/photoPickerService.dart';
+import 'package:flutter_e_ticket/CommonWidgets/appBar.dart';
+import 'package:flutter_e_ticket/CommonWidgets/appDrawer.dart';
 
 class AddMovie extends StatefulWidget {
   @override
@@ -21,14 +22,12 @@ class _AddMovieState extends State<AddMovie> {
   TextEditingController _cast4 = TextEditingController();
   DateTime localDate;
   TimeOfDay localTime;
-  PhotoPickerService photoPickerService = PhotoPickerService();
   var movieStartDate,
       movieEndDate,
       morningShowTime,
       noonShowTime,
       eveningShowTime,
       nightShowTime;
-
   Future<void> _showDatePicker(
       {@required BuildContext context, @required var movieDateVariable}) async {
     final DateTime dateTimePick = await showDatePicker(
@@ -90,213 +89,221 @@ class _AddMovieState extends State<AddMovie> {
     var _height = MediaQuery.of(context).size.height;
     var _width = MediaQuery.of(context).size.width;
 
-    return Container(
-      child: Stack(
-        children: [
-          Container(
-            height: _height,
-            width: _width,
-            decoration: imageBoxDecoration(
-              imagePath: "assets/images/movie-2.jpg",
-            ),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-              child: new Container(
-                decoration: new BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+    return Scaffold(
+      appBar: appBar(),
+      drawer: drawer(context: context),
+      extendBodyBehindAppBar: true,
+      body: Container(
+        child: Stack(
+          children: [
+            Container(
+              height: _height,
+              width: _width,
+              decoration: imageBoxDecoration(
+                imagePath: "assets/images/movie-2.jpg",
+              ),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: new Container(
+                  decoration: new BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                  ),
                 ),
               ),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 5),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Stack(
-                      children: [
-                        Container(
-                          decoration: imageBoxDecoration(
-                            imagePath: "assets/images/movie-1.jpg",
-                            isBorderNeed: true,
+            Container(
+              padding: EdgeInsets.only(top: 5),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Stack(
+                        children: [
+                          Container(
+                            decoration: imageBoxDecoration(
+                              imagePath: "assets/images/movie-1.jpg",
+                              isBorderNeed: true,
+                            ),
+                            height: _height / 4,
+                            width: _width / 4,
                           ),
-                          height: _height / 4,
-                          width: _width / 4,
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.photo_library,
-                            size: 32,
-                            color: Colors.white,
+                          IconButton(
+                            icon: Icon(
+                              Icons.photo_library,
+                              size: 32,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {},
                           ),
-                          onPressed: () {
-                            photoPickerService.pickPhoto();
-                          },
-                        ),
-                      ],
-                    ),
-                    Container(
-                      width: _width / 6,
-                      child: buildTextField(
-                          textEditController: _movieName,
-                          hintText: "Avengers Infinity War",
-                          helperText: "Movie Name"),
-                    ),
-                    Container(
-                      width: _width / 5,
-                      child: buildTextField(
-                          textEditController: _movieDetail,
-                          helperText: "Movie Detail",
-                          hintText: "This is Marvel Phase 3's most..."),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    datePickerColumn(
-                        context: context, movieDate: "movieStartDate"),
-                    Container(
-                      width: _width / 17,
-                      child: TextField(
-                        textAlign: TextAlign.center,
-                        textInputAction: TextInputAction.done,
-                        keyboardType: TextInputType.number,
-                        controller: _ticketPrice,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(CupertinoIcons.money_dollar),
-                          filled: true,
-                          contentPadding: EdgeInsets.all(8),
-                          border: InputBorder.none,
-                          hintText: "20",
-                          helperText: "Price",
+                        ],
+                      ),
+                      Container(
+                        width: _width / 6,
+                        child: buildTextField(
+                            textEditController: _movieName,
+                            hintText: "Avengers Infinity War",
+                            helperText: "Movie Name"),
+                      ),
+                      Container(
+                        width: _width / 5,
+                        child: buildTextField(
+                            textEditController: _movieDetail,
+                            helperText: "Movie Detail",
+                            hintText: "This is Marvel Phase 3's most..."),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      datePickerColumn(
+                          context: context, movieDate: "movieStartDate"),
+                      Container(
+                        width: _width / 17,
+                        child: TextField(
+                          textAlign: TextAlign.center,
+                          textInputAction: TextInputAction.done,
+                          keyboardType: TextInputType.number,
+                          controller: _ticketPrice,
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(CupertinoIcons.money_dollar),
+                            filled: true,
+                            contentPadding: EdgeInsets.all(8),
+                            border: InputBorder.none,
+                            hintText: "20",
+                            helperText: "Price",
+                          ),
                         ),
                       ),
-                    ),
-                    datePickerColumn(
-                        context: context, movieDate: "movieEndDate"),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    timePickerColumn(
-                        context: context,
-                        showTime: "morningShow",
-                        timeOfShow: morningShowTime),
-                    timePickerColumn(
-                        context: context,
-                        showTime: "noonShow",
-                        timeOfShow: noonShowTime),
-                    timePickerColumn(
-                        context: context,
-                        showTime: "eveningShow",
-                        timeOfShow: eveningShowTime),
-                    timePickerColumn(
-                        context: context,
-                        showTime: "nightShow",
-                        timeOfShow: nightShowTime),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Stack(
-                      children: [
-                        castPhotoAndName(
-                            width: _width, editingController: _cast1),
-                        IconButton(
-                          icon: Icon(
-                            Icons.photo_library,
-                            size: 32,
-                            color: Colors.white,
+                      datePickerColumn(
+                          context: context, movieDate: "movieEndDate"),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      timePickerColumn(
+                          context: context,
+                          showTime: "morningShow",
+                          timeOfShow: morningShowTime),
+                      timePickerColumn(
+                          context: context,
+                          showTime: "noonShow",
+                          timeOfShow: noonShowTime),
+                      timePickerColumn(
+                          context: context,
+                          showTime: "eveningShow",
+                          timeOfShow: eveningShowTime),
+                      timePickerColumn(
+                          context: context,
+                          showTime: "nightShow",
+                          timeOfShow: nightShowTime),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Stack(
+                        children: [
+                          castPhotoAndName(
+                              width: _width, editingController: _cast1),
+                          IconButton(
+                            icon: Icon(
+                              Icons.photo_library,
+                              size: 32,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {},
                           ),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                    Stack(
-                      children: [
-                        castPhotoAndName(
-                            width: _width, editingController: _cast2),
-                        IconButton(
-                          icon: Icon(
-                            Icons.photo_library,
-                            size: 32,
-                            color: Colors.white,
+                        ],
+                      ),
+                      Stack(
+                        children: [
+                          castPhotoAndName(
+                              width: _width, editingController: _cast2),
+                          IconButton(
+                            icon: Icon(
+                              Icons.photo_library,
+                              size: 32,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {},
                           ),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                    Stack(
-                      children: [
-                        castPhotoAndName(
-                            width: _width, editingController: _cast3),
-                        IconButton(
-                          icon: Icon(
-                            Icons.photo_library,
-                            size: 32,
-                            color: Colors.white,
+                        ],
+                      ),
+                      Stack(
+                        children: [
+                          castPhotoAndName(
+                              width: _width, editingController: _cast3),
+                          IconButton(
+                            icon: Icon(
+                              Icons.photo_library,
+                              size: 32,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {},
                           ),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                    Stack(
-                      children: [
-                        castPhotoAndName(
-                            width: _width, editingController: _cast4),
-                        IconButton(
-                          icon: Icon(
-                            Icons.photo_library,
-                            size: 32,
-                            color: Colors.white,
+                        ],
+                      ),
+                      Stack(
+                        children: [
+                          castPhotoAndName(
+                              width: _width, editingController: _cast4),
+                          IconButton(
+                            icon: Icon(
+                              Icons.photo_library,
+                              size: 32,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {},
                           ),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                    Stack(
-                      children: [
-                        castPhotoAndName(
-                            width: _width, editingController: _cast5),
-                        IconButton(
-                          icon: Icon(
-                            Icons.photo_library,
-                            size: 32,
-                            color: Colors.white,
+                        ],
+                      ),
+                      Stack(
+                        children: [
+                          castPhotoAndName(
+                              width: _width, editingController: _cast5),
+                          IconButton(
+                            icon: Icon(
+                              Icons.photo_library,
+                              size: 32,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {},
                           ),
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: Text("Reset"),
-                    ),
-                    SizedBox(
-                      width: 15,
-                    ),
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: Text("Submit"),
-                    ),
-                  ],
-                ),
-              ],
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {},
+                        child: Text("Reset"),
+                      ),
+                      SizedBox(
+                        width: 15,
+                      ),
+                      ElevatedButton(
+                        onPressed: () {},
+                        child: Text("Submit"),
+                      ),
+                      SizedBox(
+                        height: 100,
+                        width: 100,
+                        child: null,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
