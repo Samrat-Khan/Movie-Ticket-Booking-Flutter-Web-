@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -5,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_e_ticket/CommonWidgets/appBar.dart';
 import 'package:flutter_e_ticket/CommonWidgets/appDrawer.dart';
+import 'package:flutter_e_ticket/Services/addMovieService.dart';
+import 'package:flutter_e_ticket/Services/photoPickerService.dart';
 
 class AddMovie extends StatefulWidget {
   @override
@@ -15,11 +18,11 @@ class _AddMovieState extends State<AddMovie> {
   TextEditingController _movieName = TextEditingController();
   TextEditingController _movieDetail = TextEditingController();
   TextEditingController _ticketPrice = TextEditingController();
-  TextEditingController _cast1 = TextEditingController();
-  TextEditingController _cast5 = TextEditingController();
-  TextEditingController _cast2 = TextEditingController();
-  TextEditingController _cast3 = TextEditingController();
-  TextEditingController _cast4 = TextEditingController();
+  TextEditingController _cast1Name = TextEditingController();
+  TextEditingController _cast5Name = TextEditingController();
+  TextEditingController _cast2Name = TextEditingController();
+  TextEditingController _cast3Name = TextEditingController();
+  TextEditingController _cast4Name = TextEditingController();
   DateTime localDate;
   TimeOfDay localTime;
   var movieStartDate,
@@ -28,6 +31,72 @@ class _AddMovieState extends State<AddMovie> {
       noonShowTime,
       eveningShowTime,
       nightShowTime;
+  Uint8List moviePosterImage,
+      cast1Image,
+      cast2Image,
+      cast3Image,
+      cast4Image,
+      cast5Image;
+
+  ImagePicker imagePicker = ImagePicker();
+  UploadMovieToFirebase uploadMovieToFirebase = UploadMovieToFirebase();
+  selectImage({@required String whatImage}) async {
+    Uint8List tempImage = await imagePicker.pickPhoto();
+
+    if (tempImage != null) {
+      switch (whatImage) {
+        case "moviePoster":
+          {
+            setState(() {
+              moviePosterImage = tempImage;
+            });
+
+            break;
+          }
+        case "cast_1":
+          {
+            setState(() {
+              cast1Image = tempImage;
+            });
+
+            break;
+          }
+        case "cast_2":
+          {
+            setState(() {
+              cast2Image = tempImage;
+            });
+
+            break;
+          }
+        case "cast_3":
+          {
+            setState(() {
+              cast3Image = tempImage;
+            });
+
+            break;
+          }
+        case "cast_4":
+          {
+            setState(() {
+              cast4Image = tempImage;
+            });
+
+            break;
+          }
+        case "cast_5":
+          {
+            setState(() {
+              cast5Image = tempImage;
+            });
+
+            break;
+          }
+      }
+    }
+  }
+
   Future<void> _showDatePicker(
       {@required BuildContext context, @required var movieDateVariable}) async {
     final DateTime dateTimePick = await showDatePicker(
@@ -76,12 +145,81 @@ class _AddMovieState extends State<AddMovie> {
     }
   }
 
+  Future uploadMovie() async {
+    try {
+      await uploadMovieToFirebase
+          .uploadMovieDetail(
+              movieTitle: _movieName.text,
+              aboutMovie: _movieDetail.text,
+              moviePoster: moviePosterImage,
+              ticketPrice: int.parse(_ticketPrice.text),
+              cast_1: _cast1Name.text,
+              cast1Photo: cast1Image,
+              cast_2: _cast2Name.text,
+              cast2Photo: cast2Image,
+              cast_3: _cast3Name.text,
+              cast3Photo: cast3Image,
+              cast_4: _cast4Name.text,
+              cast4Photo: cast4Image,
+              cast_5: _cast5Name.text,
+              cast5Photo: cast5Image,
+              startDate: movieStartDate,
+              endDate: movieEndDate,
+              morningShow: morningShowTime,
+              noonShow: noonShowTime,
+              eveningShow: eveningShowTime,
+              nightShow: nightShowTime,
+              context: context)
+          .whenComplete(() => clearAllVariable());
+    } catch (e) {
+      print("Soming happening due to button press $e");
+    }
+  }
+
+  clearAllVariable() {
+    setState(() {
+      morningShowTime = null;
+      noonShowTime = null;
+      eveningShowTime = null;
+      nightShowTime = null;
+      movieStartDate = null;
+      movieEndDate = null;
+      cast1Image = null;
+      cast2Image = null;
+      cast3Image = null;
+      cast4Image = null;
+      cast5Image = null;
+      moviePosterImage = null;
+    });
+
+    _cast1Name.clear();
+    _cast2Name.clear();
+    _cast3Name.clear();
+    _cast4Name.clear();
+    _cast5Name.clear();
+    _ticketPrice.clear();
+    _movieName.clear();
+    _movieDetail.clear();
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     localDate = DateTime.now();
     localTime = TimeOfDay.now();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _cast5Name.dispose();
+    _cast4Name.dispose();
+    _cast3Name.dispose();
+    _cast2Name.dispose();
+    _cast1Name.dispose();
+    _ticketPrice.dispose();
   }
 
   @override
@@ -120,25 +258,16 @@ class _AddMovieState extends State<AddMovie> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Stack(
-                        children: [
-                          Container(
-                            decoration: imageBoxDecoration(
+                      GestureDetector(
+                        child: Container(
+                          decoration: imageBoxDecoration(
                               imagePath: "assets/images/movie-1.jpg",
                               isBorderNeed: true,
-                            ),
-                            height: _height / 4,
-                            width: _width / 4,
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              Icons.photo_library,
-                              size: 32,
-                              color: Colors.white,
-                            ),
-                            onPressed: () {},
-                          ),
-                        ],
+                              uInt8listImage: moviePosterImage),
+                          height: _height / 4,
+                          width: _width / 4,
+                        ),
+                        onTap: () => selectImage(whatImage: "moviePoster"),
                       ),
                       Container(
                         width: _width / 6,
@@ -209,70 +338,80 @@ class _AddMovieState extends State<AddMovie> {
                       Stack(
                         children: [
                           castPhotoAndName(
-                              width: _width, editingController: _cast1),
+                              width: _width,
+                              editingController: _cast1Name,
+                              uInt8listImage: cast1Image),
                           IconButton(
                             icon: Icon(
                               Icons.photo_library,
                               size: 32,
                               color: Colors.white,
                             ),
-                            onPressed: () {},
+                            onPressed: () => selectImage(whatImage: "cast_1"),
                           ),
                         ],
                       ),
                       Stack(
                         children: [
                           castPhotoAndName(
-                              width: _width, editingController: _cast2),
+                              width: _width,
+                              editingController: _cast2Name,
+                              uInt8listImage: cast2Image),
                           IconButton(
                             icon: Icon(
                               Icons.photo_library,
                               size: 32,
                               color: Colors.white,
                             ),
-                            onPressed: () {},
+                            onPressed: () => selectImage(whatImage: "cast_2"),
                           ),
                         ],
                       ),
                       Stack(
                         children: [
                           castPhotoAndName(
-                              width: _width, editingController: _cast3),
+                              width: _width,
+                              editingController: _cast3Name,
+                              uInt8listImage: cast3Image),
                           IconButton(
                             icon: Icon(
                               Icons.photo_library,
                               size: 32,
                               color: Colors.white,
                             ),
-                            onPressed: () {},
+                            onPressed: () => selectImage(whatImage: "cast_3"),
                           ),
                         ],
                       ),
                       Stack(
                         children: [
                           castPhotoAndName(
-                              width: _width, editingController: _cast4),
+                              width: _width,
+                              editingController: _cast4Name,
+                              uInt8listImage: cast4Image),
                           IconButton(
                             icon: Icon(
                               Icons.photo_library,
                               size: 32,
                               color: Colors.white,
                             ),
-                            onPressed: () {},
+                            onPressed: () => selectImage(whatImage: "cast_4"),
                           ),
                         ],
                       ),
                       Stack(
                         children: [
                           castPhotoAndName(
-                              width: _width, editingController: _cast5),
+                              width: _width,
+                              editingController: _cast5Name,
+                              uInt8listImage: cast5Image),
                           IconButton(
                             icon: Icon(
                               Icons.photo_library,
                               size: 32,
                               color: Colors.white,
                             ),
-                            onPressed: () {},
+                            onPressed: () => selectImage(whatImage: "cast_5"),
                           ),
                         ],
                       ),
@@ -282,20 +421,15 @@ class _AddMovieState extends State<AddMovie> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () => clearAllVariable(),
                         child: Text("Reset"),
                       ),
                       SizedBox(
                         width: 15,
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () => uploadMovie(),
                         child: Text("Submit"),
-                      ),
-                      SizedBox(
-                        height: 100,
-                        width: 100,
-                        child: null,
                       ),
                     ],
                   ),
@@ -309,7 +443,9 @@ class _AddMovieState extends State<AddMovie> {
   }
 
   Column castPhotoAndName(
-      {double width, TextEditingController editingController}) {
+      {double width,
+      TextEditingController editingController,
+      Uint8List uInt8listImage}) {
     return Column(
       children: [
         Container(
@@ -318,7 +454,9 @@ class _AddMovieState extends State<AddMovie> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
             image: DecorationImage(
-              image: AssetImage("assets/images/face.png"),
+              image: uInt8listImage == null
+                  ? AssetImage("assets/images/face.png")
+                  : MemoryImage(uInt8listImage),
               fit: BoxFit.cover,
             ),
           ),
@@ -383,10 +521,12 @@ class _AddMovieState extends State<AddMovie> {
   }
 
   BoxDecoration imageBoxDecoration(
-      {String imagePath, bool isBorderNeed: false}) {
+      {String imagePath, bool isBorderNeed: false, Uint8List uInt8listImage}) {
     return BoxDecoration(
       image: DecorationImage(
-        image: AssetImage(imagePath),
+        image: uInt8listImage == null
+            ? AssetImage(imagePath)
+            : MemoryImage(uInt8listImage),
         fit: BoxFit.cover,
       ),
       borderRadius: !isBorderNeed ? null : BorderRadius.circular(8),
