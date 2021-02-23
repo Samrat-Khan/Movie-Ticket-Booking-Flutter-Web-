@@ -9,7 +9,9 @@ class MovieViewPublic extends StatefulWidget {
 }
 
 class _MovieViewPublicState extends State<MovieViewPublic> {
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  CollectionReference firestore =
+      FirebaseFirestore.instance.collection("Movie");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,15 +19,20 @@ class _MovieViewPublicState extends State<MovieViewPublic> {
       extendBodyBehindAppBar: true,
       drawer: drawer(context: context),
       backgroundColor: Colors.deepPurpleAccent,
-      body: FutureBuilder(
-        future: firestore.collection("Movie").get(),
+      body: StreamBuilder(
+        stream: firestore.snapshots(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return Text("Error");
+            return Text("View Movie  Error");
           }
-          if (snapshot.connectionState == ConnectionState.done) {
-            Map<String, dynamic> ds = snapshot.data.data();
-            return Text("Data is ${ds["AboutMovie"]} ");
+          if (snapshot.hasData) {
+            return ListView.builder(
+              itemCount: snapshot.data.documents.length,
+              itemBuilder: (context, index) {
+                DocumentSnapshot ds = snapshot.data.documents[index];
+                return Text(ds.data()["MovieTitle"]);
+              },
+            );
           }
           return CircularProgressIndicator.adaptive();
         },
