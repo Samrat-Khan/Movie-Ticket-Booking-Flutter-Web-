@@ -147,30 +147,30 @@ class _AddMovieState extends State<AddMovie> {
 
   Future uploadMovie() async {
     try {
-      await uploadMovieToFirebase
-          .uploadMovieDetail(
-              movieTitle: _movieName.text,
-              aboutMovie: _movieDetail.text,
-              moviePoster: moviePosterImage,
-              ticketPrice: int.parse(_ticketPrice.text),
-              cast_1: _cast1Name.text,
-              cast1Photo: cast1Image,
-              cast_2: _cast2Name.text,
-              cast2Photo: cast2Image,
-              cast_3: _cast3Name.text,
-              cast3Photo: cast3Image,
-              cast_4: _cast4Name.text,
-              cast4Photo: cast4Image,
-              cast_5: _cast5Name.text,
-              cast5Photo: cast5Image,
-              startDate: movieStartDate,
-              endDate: movieEndDate,
-              morningShow: morningShowTime,
-              noonShow: noonShowTime,
-              eveningShow: eveningShowTime,
-              nightShow: nightShowTime,
-              context: context)
-          .whenComplete(() => clearAllVariable());
+      // await uploadMovieToFirebase
+      //     .uploadMovieDetail(
+      //         movieTitle: _movieName.text,
+      //         aboutMovie: _movieDetail.text,
+      //         moviePoster: moviePosterImage,
+      //         ticketPrice: int.parse(_ticketPrice.text),
+      //         cast_1: _cast1Name.text,
+      //         cast1Photo: cast1Image,
+      //         cast_2: _cast2Name.text,
+      //         cast2Photo: cast2Image,
+      //         cast_3: _cast3Name.text,
+      //         cast3Photo: cast3Image,
+      //         cast_4: _cast4Name.text,
+      //         cast4Photo: cast4Image,
+      //         cast_5: _cast5Name.text,
+      //         cast5Photo: cast5Image,
+      //         startDate: movieStartDate,
+      //         endDate: movieEndDate,
+      //         morningShow: morningShowTime,
+      //         noonShow: noonShowTime,
+      //         eveningShow: eveningShowTime,
+      //         nightShow: nightShowTime,
+      //         context: context)
+      //     .whenComplete(() => clearAllVariable());
     } catch (e) {
       print("Soming happening due to button press $e");
     }

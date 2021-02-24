@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_e_ticket/CommonWidgets/appBar.dart';
 import 'package:flutter_e_ticket/CommonWidgets/appDrawer.dart';
@@ -9,33 +10,34 @@ class MovieViewPublic extends StatefulWidget {
 }
 
 class _MovieViewPublicState extends State<MovieViewPublic> {
-  CollectionReference firestore =
-      FirebaseFirestore.instance.collection("Movie");
-
   @override
   Widget build(BuildContext context) {
+    File image;
     return Scaffold(
       appBar: appBar(),
       extendBodyBehindAppBar: true,
       drawer: drawer(context: context),
       backgroundColor: Colors.deepPurpleAccent,
-      body: StreamBuilder(
-        stream: firestore.snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Text("View Movie  Error");
-          }
-          if (snapshot.hasData) {
-            return ListView.builder(
-              itemCount: snapshot.data.documents.length,
-              itemBuilder: (context, index) {
-                DocumentSnapshot ds = snapshot.data.documents[index];
-                return Text(ds.data()["MovieTitle"]);
-              },
-            );
-          }
-          return CircularProgressIndicator.adaptive();
-        },
+      body: Wrap(
+        runAlignment: WrapAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 20, left: 50, right: 20),
+            child: Card(
+              child: Container(
+                constraints: BoxConstraints.tightFor(height: 180, width: 150),
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: image != null
+                        ? FileImage(image)
+                        : AssetImage("assets/images/face.png"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
