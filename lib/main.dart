@@ -1,11 +1,19 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_e_ticket/Services/Models/movieModel.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'Routes/route.dart';
 
+const String movieModelName = "Movie";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter<MovieModel>(MovieModelAdapter());
+  await Hive.openBox<MovieModel>(movieModelName);
   await Firebase.initializeApp();
+
   runApp(
     MyApp(),
   );
@@ -18,6 +26,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(

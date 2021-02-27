@@ -6,8 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_e_ticket/CommonWidgets/appBar.dart';
 import 'package:flutter_e_ticket/CommonWidgets/appDrawer.dart';
+import 'package:flutter_e_ticket/Services/Models/movieModel.dart';
 import 'package:flutter_e_ticket/Services/addMovieService.dart';
 import 'package:flutter_e_ticket/Services/photoPickerService.dart';
+import 'package:hive/hive.dart';
+
+import '../../main.dart';
 
 class AddMovie extends StatefulWidget {
   @override
@@ -25,12 +29,8 @@ class _AddMovieState extends State<AddMovie> {
   TextEditingController _cast4Name = TextEditingController();
   DateTime localDate;
   TimeOfDay localTime;
-  var movieStartDate,
-      movieEndDate,
-      morningShowTime,
-      noonShowTime,
-      eveningShowTime,
-      nightShowTime;
+  DateTime movieStartDate, movieEndDate;
+  TimeOfDay morningShowTime, noonShowTime, eveningShowTime, nightShowTime;
   Uint8List moviePosterImage,
       cast1Image,
       cast2Image,
@@ -39,6 +39,7 @@ class _AddMovieState extends State<AddMovie> {
       cast5Image;
 
   ImagePicker imagePicker = ImagePicker();
+  Box<MovieModel> movieModel;
   UploadMovieToFirebase uploadMovieToFirebase = UploadMovieToFirebase();
   selectImage({@required String whatImage}) async {
     Uint8List tempImage = await imagePicker.pickPhoto();
@@ -146,33 +147,47 @@ class _AddMovieState extends State<AddMovie> {
   }
 
   Future uploadMovie() async {
+    UploadMovieToFirebase movieToFirebase = UploadMovieToFirebase();
+    final String movieName = _movieName.text;
+    final String movieDetail = _movieDetail.text;
+    final int ticketPrice = int.parse(_ticketPrice.text);
+    final String cast1Name = _cast1Name.text;
+    final String cast2Name = _cast2Name.text;
+    final String cast3Name = _cast3Name.text;
+    final String cast4Name = _cast4Name.text;
+    final String cast5Name = _cast5Name.text;
     try {
-      // await uploadMovieToFirebase
-      //     .uploadMovieDetail(
-      //         movieTitle: _movieName.text,
-      //         aboutMovie: _movieDetail.text,
-      //         moviePoster: moviePosterImage,
-      //         ticketPrice: int.parse(_ticketPrice.text),
-      //         cast_1: _cast1Name.text,
-      //         cast1Photo: cast1Image,
-      //         cast_2: _cast2Name.text,
-      //         cast2Photo: cast2Image,
-      //         cast_3: _cast3Name.text,
-      //         cast3Photo: cast3Image,
-      //         cast_4: _cast4Name.text,
-      //         cast4Photo: cast4Image,
-      //         cast_5: _cast5Name.text,
-      //         cast5Photo: cast5Image,
-      //         startDate: movieStartDate,
-      //         endDate: movieEndDate,
-      //         morningShow: morningShowTime,
-      //         noonShow: noonShowTime,
-      //         eveningShow: eveningShowTime,
-      //         nightShow: nightShowTime,
-      //         context: context)
-      //     .whenComplete(() => clearAllVariable());
+      MovieModel model = MovieModel(
+        movieTitle: _movieName.text,
+        moviePostLink: await movieToFirebase.uploadPosterToFirebaseStorage(
+            movieName: movieName, posterImage: moviePosterImage),
+        movieDetail: movieDetail,
+        ticketPrice: ticketPrice,
+        cast1Name: cast1Name,
+        cast1PhotoLink: await movieToFirebase.uploadCastPhotoToFirebaseStorage(
+            castPhoto: cast1Image, castName: cast1Name),
+        cast2Name: cast2Name,
+        cast2PhotoLink: await movieToFirebase.uploadCastPhotoToFirebaseStorage(
+            castPhoto: cast2Image, castName: cast2Name),
+        cast3Name: cast3Name,
+        cast3PhotoLink: await movieToFirebase.uploadCastPhotoToFirebaseStorage(
+            castPhoto: cast3Image, castName: cast3Name),
+        cast4Name: cast4Name,
+        cast4PhotoLink: await movieToFirebase.uploadCastPhotoToFirebaseStorage(
+            castPhoto: cast4Image, castName: cast4Name),
+        cast5Name: cast5Name,
+        cast5PhotoLink: await movieToFirebase.uploadCastPhotoToFirebaseStorage(
+            castPhoto: cast5Image, castName: cast5Name),
+        startDate: movieStartDate,
+        endDate: movieEndDate,
+        morningShowTime: morningShowTime.format(context),
+        nightShowTime: noonShowTime.format(context),
+        eveningShowTime: eveningShowTime.format(context),
+        noonShowTime: nightShowTime.format(context),
+      );
+      movieModel.add(model).whenComplete(() => clearAllVariable());
     } catch (e) {
-      print("Soming happening due to button press $e");
+      print("Something happening due to button press $e");
     }
   }
 
@@ -208,6 +223,7 @@ class _AddMovieState extends State<AddMovie> {
     super.initState();
     localDate = DateTime.now();
     localTime = TimeOfDay.now();
+    movieModel = Hive.box<MovieModel>(movieModelName);
   }
 
   @override
